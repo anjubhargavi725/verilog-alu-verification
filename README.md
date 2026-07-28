@@ -11,7 +11,7 @@ all 2,048 possible input combinations against a reference model – not just
 a small set of selected input vectors.
 
 It was created as a first hands-on exercise in designing and verifying
-digital circuits, having experience in materials science and semiconductors.
+digital circuits.
 
 ## Design:
 Opcode - Operation
