@@ -1,0 +1,56 @@
+// ============================================================
+// 4-bit ALU
+// 8 operations: ADD, SUB, AND, OR, XOR, NOT, shift left, shift right
+// Outputs: result, carry_out, zero, overflow
+// ============================================================
+
+module alu (
+    input  [3:0] a,
+    input  [3:0] b,
+    input  [2:0] opcode,
+    output reg [3:0] result,
+    output reg carry_out,
+    output reg zero,
+    output reg overflow
+);
+
+    reg [4:0] temp; // extra bit wide, to catch carry/borrow
+
+    always @(*) begin
+        // Reset every output first so nothing holds a stale value
+        result    = 4'b0000;
+        carry_out = 1'b0;
+        overflow  = 1'b0;
+
+        case (opcode)
+            3'b000: begin // ADD
+                temp      = {1'b0, a} + {1'b0, b};
+                result    = temp[3:0];
+                carry_out = temp[4];
+                overflow  = (a[3] == b[3]) && (result[3] != a[3]);
+            end
+            3'b001: begin // SUB
+                temp      = {1'b0, a} - {1'b0, b};
+                result    = temp[3:0];
+                carry_out = temp[4];
+                overflow  = (a[3] != b[3]) && (result[3] != a[3]);
+            end
+            3'b010: result = a & b;              // AND
+            3'b011: result = a | b;              // OR
+            3'b100: result = a ^ b;              // XOR
+            3'b101: result = ~a;                 // NOT a
+            3'b110: begin                        // shift left
+                result    = a << 1;
+                carry_out = a[3];
+            end
+            3'b111: begin                        // shift right
+                result    = a >> 1;
+                carry_out = a[0];
+            end
+            default: result = 4'b0000;
+        endcase
+
+        zero = (result == 4'b0000);
+    end
+
+endmodule
